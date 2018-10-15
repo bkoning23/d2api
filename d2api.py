@@ -18,7 +18,7 @@ def get_request(url):
     config.read('config.ini')
     APIKey = config['DEFAULT']['APIKey']
     headers = {"X-API-Key": APIKey}
-    print(url)
+    #print(url)
     req = requests.get(url, headers=headers)
     return req
 
