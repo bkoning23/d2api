@@ -9,7 +9,6 @@ player_url = "https://www.bungie.net/Platform/Destiny2/"
 
 #SearchDestinyPlayer/All/Cookieking%231366
 
-
 def main():
     player = create_player("All", "Cookieking%231366")
     print(player.character_ids)
@@ -19,7 +18,7 @@ def get_request(url):
     config.read('config.ini')
     APIKey = config['DEFAULT']['APIKey']
     headers = {"X-API-Key": APIKey}
-    #print(url)
+    print(url)
     req = requests.get(url, headers=headers)
     return req
 
