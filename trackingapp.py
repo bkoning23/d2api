@@ -8,3 +8,4 @@ APIKey = config['DEFAULT']['APIKey']
 api = d2api(APIKey)
 api.create_player(4, "Cookieking%231366")
 print(api.current_player.character_ids)
+print(api.manifest_filename)

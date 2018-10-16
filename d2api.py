@@ -11,6 +11,7 @@ class d2api:
     def __init__(self, apikey):
         self.api_key = apikey
         self.current_player = ""
+        self.manifest_filename = ""
         self._update_manifest()
 
     def _get_request(self, url):
@@ -22,12 +23,16 @@ class d2api:
     def _update_manifest(self):
         url = self.PLATFORM_URL + "Manifest"
         world_url = (self._get_request(url)).json()['Response']['mobileWorldContentPaths']['en']
-        print(world_url)
+
         base_file_name = world_url.split("/")[-1].split(".")[0]
+        hash_string = base_file_name.split("_")[-1]
         zip_file_name = base_file_name + ".zip"
-        sql_file_name = base_file_name + ".sqlite3"
-        if(os.path.exists("manifest/" + sql_file_name)):
-            return
+        sql_file_name = "manifest/" + base_file_name + ".sqlite3"
+        
+        if(os.path.exists(sql_file_name)):
+            self.manifest_filename = sql_file_name
+            return 0
+            
         world_url = "https://www.bungie.net" + world_url
         r = requests.get(world_url)
         with open(zip_file_name, 'wb') as manifest:
@@ -35,15 +40,14 @@ class d2api:
         with zipfile.ZipFile(zip_file_name, 'r') as zip_ref:
             zip_ref.extractall("manifest")
         os.remove(zip_file_name)
-
         
-        os.rename("manifest/" + base_file_name + ".content", "manifest/" + sql_file_name)
-        with open("manifest/" + sql_file_name, 'rb') as f:
+        os.rename("manifest/" + base_file_name + ".content", sql_file_name)
+        with open(sql_file_name, 'rb') as f:
             data = f.read()
-            print(hashlib.md5(data).hexdigest())
-
-
-
+            if(hash_string != (hashlib.md5(data).hexdigest())):
+                os.remove(sql_file_name)
+                return 1
+        self.manifest_filename = sql_file_name
 
     def create_player(self, platform, name):
         member_data = self.get_membership_data(platform, name)

@@ -5,6 +5,7 @@ class Destiny2Player():
         self.membership_type = membership_type       
         self.membership_id = membership_id
         self.character_ids = []
+        
 
     
 
