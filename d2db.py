@@ -15,7 +15,7 @@ class d2db:
     def query(self, definition, hash_id):
         query = "SELECT json FROM {} WHERE id={}"       
         self.cur.execute(query.format(definition, hash_id))
-        return (self.cur.fetchall())
+        return (self.cur.fetchone())
 
     
 
