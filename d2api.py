@@ -4,6 +4,7 @@ import zipfile
 import os
 import hashlib
 from d2player import Destiny2Player
+from d2db import d2db
 
 class d2api:
     PLATFORM_URL = "https://www.bungie.net/Platform/Destiny2/"
@@ -13,6 +14,7 @@ class d2api:
         self.current_player = ""
         self.manifest_filename = ""
         self._update_manifest()
+        self.get_triumph_info("58812229")
 
     def _get_request(self, url):
         headers = {"X-API-Key": self.api_key}
@@ -64,7 +66,13 @@ class d2api:
     def get_character_ids(self, platform, player_id):
         url = self.PLATFORM_URL + "{}/Profile/{}/?components=100"
         url = url.format(platform, player_id)
+        print(url)
         return ((self._get_request(url)).json()['Response']['profile']['data']['characterIds'])
+
+    def get_triumph_info(self, hash_id):
+        db = d2db(self.manifest_filename)
+        print(db.query("DestinyRecordDefinition", hash_id))
+        return
 
     
 
