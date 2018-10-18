@@ -15,7 +15,7 @@ class d2api:
         self.current_player = ""
         self.manifest_filename = ""
         self._update_manifest()
-        print(self.get_triumph_info("3503308152"))
+        asdf = (self.get_triumph_info("1368759659"))
         self.compare_triumphs("Cookieking%231366", 4, "Mambo%231693", 4)
 
     def _get_request(self, url):
@@ -102,6 +102,7 @@ class d2api:
         p2_score = 0
 
         bad_ids = []
+        duplicates = []
 
         for key, value in player_one_data['records'].items():
             triumph_data = self.get_triumph_info(key)
@@ -111,15 +112,21 @@ class d2api:
             description = triumph_data['displayProperties']['description']
             score = triumph_data['completionInfo']['ScoreValue']
             if(value['state'] % 2 == 1):
-                player_one_complete.append(description)
+                player_one_complete.append((key, description, score))
                 p1_score = p1_score + score
             else:
-                player_one_not_complete.append(description)
+                player_one_not_complete.append((key, description, score))
             if(player_two_data['records'][key]['state'] % 2 == 1):
-                player_two_complete.append(description)
+                player_two_complete.append((key, description, score))
                 p2_score = p2_score + score
             else:
-                player_two_not_complete.append(description)
+                player_two_not_complete.append((key, description, score))
+
+        for value in player_one_complete:
+            if(value in player_two_complete):
+                duplicates.append(value)
+                player_one_complete.remove(value)
+                player_two_complete.remove(value)
 
         print("asdf")
         return
