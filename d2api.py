@@ -77,7 +77,6 @@ class d2api:
     def get_character_triumph_progress(self, player_platform, player_membership_id, character_id):
         url = self.PLATFORM_URL + "{}/Profile/{}/Character/{}/?components=900"
         url = url.format(player_platform, player_membership_id, character_id)
-        print(self._get_request(url).json())
         return(self._get_request(url).json()['Response']['records']['data']['records'])
 
     def get_triumph_info(self, hash_id):
@@ -144,11 +143,16 @@ class d2api:
             else:
                 player_two_not_complete.append((key, description, score))
 
+        new_player_one_complete = []
+
         for value in player_one_complete:
-            if(value in player_two_complete):
+            if value in player_two_complete:
                 duplicates.append(value)
-                player_one_complete.remove(value)
                 player_two_complete.remove(value)
+            else:
+                new_player_one_complete.append(value)
+        
+        player_one_complete = new_player_one_complete
 
         print("Pause to look at stuff.")
         return
