@@ -17,6 +17,8 @@ class d2api:
         self._update_manifest()
         asdf = (self.get_triumph_info("1368759659"))
         self.compare_triumphs("Cookieking%231366", 4, "Mambo%231693", 4)
+        print(3503308155)
+        print(self._binary_convert(3503308155))
 
     def _get_request(self, url):
         headers = {"X-API-Key": self.api_key}
@@ -101,14 +103,17 @@ class d2api:
         p1_score = 0
         p2_score = 0
 
-        bad_ids = []
         duplicates = []
 
         for key, value in player_one_data['records'].items():
             triumph_data = self.get_triumph_info(key)
+            #For some reason some triumphs have a negative hash in the DestinyRecordDefinition table but everything refers
+            #to that definition using a positive hash (this positive / correct hash is listed in the json
+            #in the DestinyRecordDefinition table). If the hash is not found, it converts the value to the negative hash
+            #and then looks it up using the negative hash. The positive and negative hash have the same BINARY representation,
+            #the negative version is the result of an arbitrary 2s Complement conversion.
             if triumph_data == 0:
-                bad_ids.append(key)
-                continue
+                triumph_data = self.get_triumph_info(self._binary_convert(int(key)))
             description = triumph_data['displayProperties']['description']
             score = triumph_data['completionInfo']['ScoreValue']
             if(value['state'] % 2 == 1):
@@ -128,8 +133,14 @@ class d2api:
                 player_one_complete.remove(value)
                 player_two_complete.remove(value)
 
-        print("asdf")
+        print("Pause to look at stuff.")
         return
+
+    def _binary_convert(self, hash_id):
+        mask = 0b11111111111111111111111111111111
+        hash_id = hash_id
+        return(~(int(bin(hash_id ^ mask), 2)))
+
 
 
 
