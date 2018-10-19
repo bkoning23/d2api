@@ -74,6 +74,12 @@ class d2api:
         print(url)
         return ((self._get_request(url)).json()['Response']['profile']['data']['characterIds'])
 
+    def get_character_triumph_progress(self, player_platform, player_membership_id, character_id):
+        url = self.PLATFORM_URL + "{}/Profile/{}/Character/{}/?components=900"
+        url = url.format(player_platform, player_membership_id, character_id)
+        print(self._get_request(url).json())
+        return(self._get_request(url).json()['Response']['records']['data']['records'])
+
     def get_triumph_info(self, hash_id):
         db = d2db(self.manifest_filename)
         try:
@@ -93,6 +99,17 @@ class d2api:
 
         player_one_data = self.get_player_triumph_progress(player_one.membership_id, player_one.membership_type)
         player_two_data = self.get_player_triumph_progress(player_two.membership_id, player_two.membership_type)
+
+        for character in player_one.character_ids:
+            data = self.get_character_triumph_progress(player_one.membership_type, player_one.membership_id, character)
+            for key, value in data.items():
+                player_one_data['records'][key] = value
+
+        for character in player_two.character_ids:
+            data = self.get_character_triumph_progress(player_two.membership_type, player_two.membership_id, character)
+            for key, value in data.items():
+                player_two_data['records'][key] = value
+
 
         player_one_complete = []
         player_two_complete = []
